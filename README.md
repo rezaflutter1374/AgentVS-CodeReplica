@@ -1,0 +1,2 @@
+# AgentVS-CodeReplica
+vscode
