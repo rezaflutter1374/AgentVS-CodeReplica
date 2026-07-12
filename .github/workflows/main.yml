@@ -10,6 +10,7 @@ permissions:
 
 jobs:
   build:
+
     strategy:
       fail-fast: false
       matrix:
@@ -21,16 +22,20 @@ jobs:
     runs-on: ${{ matrix.platform }}
 
     steps:
+
       - name: Checkout
         uses: actions/checkout@v4
+
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
+
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
+
 
       - name: Install Linux dependencies
         if: matrix.platform == 'ubuntu-22.04'
@@ -42,19 +47,28 @@ jobs:
             curl \
             wget \
             file \
-            libxdo-dev \
             libssl-dev \
             libayatana-appindicator3-dev \
             librsvg2-dev
 
-      - name: Install packages
+
+      - name: Install frontend packages
+        working-directory: ./app
         run: npm install
+
+
+      - name: Build frontend
+        working-directory: ./app
+        run: npm run build
+
 
       - name: Build Tauri App
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
         with:
+          projectPath: ./app
           tagName: ${{ github.ref_name }}
           releaseName: "AgentVS CodeReplica ${{ github.ref_name }}"
           releaseDraft: false
