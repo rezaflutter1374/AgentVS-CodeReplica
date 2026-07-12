@@ -20,10 +20,6 @@ jobs:
 
     runs-on: ${{ matrix.platform }}
 
-    defaults:
-      run:
-        working-directory: app
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -51,7 +47,8 @@ jobs:
             libayatana-appindicator3-dev \
             librsvg2-dev
 
-      - name: Install dependencies
+      - name: Install frontend dependencies
+        working-directory: app
         run: npm install
 
       - name: Build Tauri
@@ -59,7 +56,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          projectPath: app
+          projectPath: ./app
           tagName: ${{ github.ref_name }}
           releaseName: "AgentVS CodeReplica ${{ github.ref_name }}"
           releaseDraft: false
